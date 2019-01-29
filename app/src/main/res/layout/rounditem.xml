@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:id="@+id/roundItem"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content" android:clickable="true"
+                                             android:focusable="true">
+
+    <TextView
+            android:text="@string/numberLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numberLabel"
+            android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/completed"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numberEdit"
+            tools:text="000001748"
+            app:layout_constraintTop_toTopOf="@+id/numberLabel" app:layout_constraintStart_toEndOf="@+id/numberLabel"
+            android:layout_marginStart="8dp"/>
+    <TextView
+            android:text="@string/dateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dateLabel" app:layout_constraintStart_toEndOf="@+id/numberEdit"
+            android:layout_marginStart="24dp" app:layout_constraintTop_toTopOf="@+id/numberEdit"
+    />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dateEdit" app:layout_constraintTop_toTopOf="@+id/dateLabel"
+            app:layout_constraintStart_toEndOf="@+id/dateLabel"
+            android:layout_marginStart="8dp" tools:text="17.12.2018"/>
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:id="@+id/completed" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="28dp"
+            android:enabled="false"/>
+    <TextView
+            android:text="@string/autoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/carLabel" app:layout_constraintStart_toEndOf="@+id/completed"
+            android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/numberLabel"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/carEdit" app:layout_constraintStart_toEndOf="@+id/carLabel"
+            android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="@+id/carLabel"
+            tools:text="LADA LARGUS"/>
+    <TextView
+            android:text="@string/fromLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fromLabel" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/carLabel" app:layout_constraintStart_toEndOf="@+id/completed"
+            android:layout_marginStart="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fromEdit" app:layout_constraintStart_toEndOf="@+id/fromLabel"
+            android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="@+id/fromLabel"
+            tools:text="г. Омск ул. 5 Северная 201"
+    />
+</android.support.constraint.ConstraintLayout>

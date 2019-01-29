@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/ftpAddressLabel" android:key="ftpaddress" android:summary="@string/ftpAddressHint"
+            android:defaultValue="@string/ftpserver"/>
+    <EditTextPreference
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/ftpUserLabel" android:key="ftpuser" android:defaultValue="@string/ftpuser"/>
+    <EditTextPreference
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/ftpPasswordLabel" android:key="ftppassword" android:password="true"
+            android:defaultValue="@string/ftppassword"/>
+</PreferenceScreen>

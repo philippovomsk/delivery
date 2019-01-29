@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Рейсы</string>
+
+    <string name="driverLabel">Водитель</string>
+    <string name="driverHint">Выберите водителя</string>
+    <string name="nonSelected">Водитель не выбран</string>
+    <string name="exchangeLabel">Обмен данными</string>
+    <string name="settingsLabel">Настройки</string>
+    <string name="ftpAddressLabel">Адрес FTP сервера</string>
+    <string name="ftpAddressHint">Строка вида xx.xx.xx.xx/папка</string>
+    <string name="ftpUserLabel">Пользователь FTP сервера</string>
+    <string name="ftpPasswordLabel">Пароль FTP сервера</string>
+    <string name="settingsTitle">Настройки</string>
+    <string name="ftpserver">92.255.188.144/test/delivery/</string>
+    <string name="ftpuser">dzhinn</string>
+    <string name="ftppassword">Fedorov0</string>
+    <string name="driverTitle">Выберите водителя</string>
+    <string name="passwordTitle">Введите пароль</string>
+    <string name="cancelLabel">Отмена</string>
+    <string name="okLabel">Ввести</string>
+    <string name="badPassword">Неверный пароль</string>
+    <string name="numberLabel">Номер</string>
+    <string name="dateLabel">Дата</string>
+    <string name="autoLabel">Автомобиль</string>
+    <string name="fromLabel">Отгрузка</string>
+    <string name="addressLabel">Адрес</string>
+    <string name="phoneLabel">Телефон</string>
+    <string name="roundDocTitle">Рейс</string>
+</resources>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content" android:id="@+id/roundrowitem">
+
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/pointEdit"
+            app:layout_constraintTop_toTopOf="@+id/rowNumberEdit"
+            android:layout_marginStart="75dp"
+            tools:text="Индивидульный предприниматель Кулигина Татьяна Михайловна"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp" android:id="@+id/rowNumberEdit" tools:text="5"/>
+    <TextView
+            android:text="@string/addressLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addressLabel" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/pointEdit" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/addressEdit"
+            app:layout_constraintTop_toTopOf="@+id/addressLabel" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="75dp" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="628681, Ханты-Мансийский Автономный округ - Югра АО, Мегион г, Южная ул, дом № 15, корпус 3"/>
+    <TextView
+            android:text="@string/phoneLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/phoneLabel" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/addressEdit" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="19dp"
+            android:id="@+id/phoneEdit"
+            app:layout_constraintTop_toTopOf="@+id/phoneLabel" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="75dp" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" tools:text="+7 (3466) 21-91-11"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"/>
+</android.support.constraint.ConstraintLayout>
