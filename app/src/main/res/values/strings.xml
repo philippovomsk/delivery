@@ -11,9 +11,9 @@
     <string name="ftpUserLabel">Пользователь FTP сервера</string>
     <string name="ftpPasswordLabel">Пароль FTP сервера</string>
     <string name="settingsTitle">Настройки</string>
-    <string name="ftpserver">92.255.188.144/test/delivery/</string>
-    <string name="ftpuser">dzhinn</string>
-    <string name="ftppassword">Fedorov0</string>
+    <string name="ftpserver">109.194.117.21/delivery/</string>
+    <string name="ftpuser">imik</string>
+    <string name="ftppassword">77DrhJhfPfdRbk</string>
     <string name="driverTitle">Выберите водителя</string>
     <string name="passwordTitle">Введите пароль</string>
     <string name="cancelLabel">Отмена</string>
