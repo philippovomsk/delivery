@@ -43,7 +43,7 @@
         <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="parent"
                 android:id="@+id/completed" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="28dp"/>
         <TextView
                 android:text="@string/autoLabel"

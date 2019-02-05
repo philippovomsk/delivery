@@ -120,7 +120,7 @@ public class ExchangeJobService extends JobService implements Runnable {
 
         Db db = ((DeliveryApp) getApplication()).getDatabase();
 
-        List<Round> forsend = db.roundDocDAO().getForSend(currentDriverId);
+        List<RoundDoc> forsend = db.roundDocDAO().getForSend(currentDriverId);
         if(forsend.size() == 0) {
             Log.d("delivery.exchange", "Нет данных для отправки");
             return;
@@ -129,11 +129,18 @@ public class ExchangeJobService extends JobService implements Runnable {
         f.sendNoOp();
 
         List<Map<String, Object>> roundComplete = new ArrayList<>();
-        for(Round doc : forsend) {
+        for(RoundDoc doc : forsend) {
             Map<String, Object> dc = new HashMap<>();
-            dc.put("id", doc.id);
-            dc.put("complete", doc.complete);
+            dc.put("id", doc.head.id);
+            dc.put("complete", doc.head.complete);
             roundComplete.add(dc);
+
+            for(RoundRow row : doc.rows) {
+                dc = new HashMap<>();
+                dc.put("id", row.docid);
+                dc.put("complete", row.complete);
+                roundComplete.add(dc);
+            }
         }
 
         f.sendNoOp();
@@ -185,31 +192,46 @@ public class ExchangeJobService extends JobService implements Runnable {
         Log.d("delivery.exchange", "Отправлен файл с данными " + officeExchangeNumber);
     }
 
+    private void updateCompleteFromOldDoc(RoundDoc oldDoc, RoundDoc newDoc) {
+        Map<String, Boolean> oldRowsComplete = new HashMap<>();
+        for(RoundRow oldRow : oldDoc.rows) {
+            oldRowsComplete.put(oldRow.docid, oldRow.complete);
+        }
+
+        newDoc.head.complete = oldDoc.head.complete;
+        for(RoundRow newRow : newDoc.rows) {
+            if(oldRowsComplete.containsKey(newRow.docid)) {
+                newRow.complete = oldRowsComplete.get(newRow.docid);
+            }
+        }
+    }
+
     private <T extends EntityId> void saveDataToDb(ExchangeDAO<T> dao, List<T> newItems) {
-        Map<String, T> m = new HashMap<>();
+        Map<String, T> newItemsId = new HashMap<>();
         for (T i : newItems) {
-            m.put(i.getId(), i);
+            newItemsId.put(i.getId(), i);
         }
 
         List<T> fordel = new ArrayList<>();
         List<T> forupd = new ArrayList<>();
 
         List<T> oldItems = dao.getAll();
-        for (T i : oldItems) {
-            if (m.containsKey(i.getId())) {
-                T ni = m.get(i.getId());
-                if(ni instanceof RoundDoc) {
-                    ((RoundDoc) ni).head.complete = ((RoundDoc) i).head.complete;
+        for (T oldItem : oldItems) {
+            if (newItemsId.containsKey(oldItem.getId())) {
+                T newItem = newItemsId.get(oldItem.getId());
+
+                if(newItem instanceof RoundDoc) {
+                    updateCompleteFromOldDoc((RoundDoc) oldItem, (RoundDoc) newItem);
                 }
 
-                forupd.add(ni);
-                m.remove(i.getId());
+                forupd.add(newItem);
+                newItemsId.remove(oldItem.getId());
             } else {
-                fordel.add(i);
+                fordel.add(oldItem);
             }
         }
 
-        List<T> forins = new ArrayList<>(m.values());
+        List<T> forins = new ArrayList<>(newItemsId.values());
 
         dao.deleteAll(fordel);
         dao.updateAll(forupd);

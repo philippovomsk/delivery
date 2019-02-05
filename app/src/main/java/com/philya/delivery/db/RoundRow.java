@@ -24,4 +24,8 @@ public class RoundRow implements Serializable {
 
     public String phone;
 
+    public String docid;
+
+    public boolean complete = false;
+
 }

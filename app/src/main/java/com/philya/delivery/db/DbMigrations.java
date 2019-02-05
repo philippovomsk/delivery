@@ -12,4 +12,11 @@ public class DbMigrations {
         }
     };
 
+    public static Migration Migration2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+            supportSQLiteDatabase.execSQL("ALTER TABLE roundrow ADD COLUMN 'docid' TEXT;");
+            supportSQLiteDatabase.execSQL("ALTER TABLE roundrow ADD COLUMN 'complete' INTEGER NOT NULL DEFAULT 0;");
+        }
+    };
 }

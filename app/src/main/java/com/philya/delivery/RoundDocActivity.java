@@ -58,7 +58,7 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
 
         rxDisposable = new CompositeDisposable();
 
-        if(savedInstanceState != null && savedInstanceState.containsKey("doc")) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("doc")) {
             doc = (RoundDoc) savedInstanceState.getSerializable("doc");
         } else {
             doc = (RoundDoc) getIntent().getExtras().get("doc");
@@ -75,7 +75,7 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
         completed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(doc.head.complete != isChecked) {
+                if (doc.head.complete != isChecked) {
                     doc.head.complete = isChecked;
                     saveDoc();
                 }
@@ -134,7 +134,7 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
                     public void onComplete() {
                         Log.d("delivery.roundDoc", "сохранен документ");
 
-                        Exchange.startExchangeJob(getApplicationContext(), 0);
+                        Exchange.startExchangeJob(getApplicationContext(), 10000);
                     }
 
                     @Override
@@ -183,6 +183,8 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
 
         private TextView phoneEdit;
 
+        private CheckBox completed;
+
         private int firstColor;
 
         private int secondColor;
@@ -195,6 +197,7 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
             pointEdit = (TextView) itemView.findViewById(R.id.pointEdit);
             addressEdit = (TextView) itemView.findViewById(R.id.addressEdit);
             phoneEdit = (TextView) itemView.findViewById(R.id.phoneEdit);
+            completed = (CheckBox) itemView.findViewById(R.id.completed);
 
             TypedValue windowBackground = new TypedValue();
             getTheme().resolveAttribute(android.R.attr.windowBackground, windowBackground, true);
@@ -210,9 +213,31 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
             pointEdit.setText(row.point);
             addressEdit.setText(row.address);
             phoneEdit.setText(row.phone);
+            completed.setChecked(row.complete);
 
             view.setBackgroundColor((position % 2 == 0) ? firstColor : secondColor);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    row.complete = !row.complete;
+                    completed.setChecked(row.complete);
+                    saveDoc();
+
+                }
+            });
+
+            completed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (row.complete != isChecked) {
+                        row.complete = isChecked;
+                        saveDoc();
+                    }
+                }
+            });
         }
+
     }
 
 }
