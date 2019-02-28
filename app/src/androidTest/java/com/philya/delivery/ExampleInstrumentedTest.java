@@ -88,4 +88,54 @@ public class ExampleInstrumentedTest {
         // but you need to validate that the data was migrated properly.
         db.close();
     }
+
+    @Test
+    public void migrate3To4() throws IOException {
+        SupportSQLiteDatabase db = helper.createDatabase(TEST_DB, 3);
+
+        // db has schema version 1. insert some data using SQL queries.
+        // You cannot use DAO classes because they expect the latest schema.
+        //db.execSQL(...);
+        ContentValues cvs = new ContentValues();
+        cvs.put("id", "1");
+        cvs.put("number", "222");
+        cvs.put("date", 2);
+        cvs.put("car", "");
+        cvs.put("driverId", "");
+        cvs.put("complete", false);
+        cvs.put("'from'", "");
+        db.insert("round", SQLiteDatabase.CONFLICT_REPLACE, cvs);
+
+        cvs.clear();
+        cvs.put("owner", "1");
+        cvs.put("rowNumber", 1);
+        cvs.put("point", "aaa");
+        cvs.put("address", "");
+        cvs.put("phone", "");
+        cvs.put("docid", "2222222");
+        cvs.put("complete", true);
+        db.insert("roundrow", SQLiteDatabase.CONFLICT_REPLACE, cvs);
+
+        // Prepare for the next version.
+        db.close();
+
+        // Re-open the database with version 2 and provide
+        // MIGRATION_1_2 as the migration process.
+        db = helper.runMigrationsAndValidate(TEST_DB, 4, true, DbMigrations.Migration3_4);
+
+        cvs.put("fio", "petrov");
+        db.update("roundrow", SQLiteDatabase.CONFLICT_REPLACE, cvs, "owner = \"1\" AND rowNumber = 1", null);
+
+        Cursor c = db.query("SELECT owner, rowNumber, fio FROM roundrow");
+        if(c.moveToFirst()) {
+            Assert.assertEquals(1, c.getInt(1));
+            Assert.assertEquals( "petrov", c.getString(2));
+        } else {
+            Assert.fail();
+        }
+
+        // MigrationTestHelper automatically verifies the schema changes,
+        // but you need to validate that the data was migrated properly.
+        db.close();
+    }
 }

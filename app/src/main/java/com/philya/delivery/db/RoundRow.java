@@ -28,4 +28,6 @@ public class RoundRow implements Serializable {
 
     public boolean complete = false;
 
+    public String fio;
+
 }

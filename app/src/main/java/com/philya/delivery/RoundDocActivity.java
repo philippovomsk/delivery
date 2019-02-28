@@ -183,6 +183,8 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
 
         private TextView phoneEdit;
 
+        private TextView fioEdit;
+
         private CheckBox completed;
 
         private int firstColor;
@@ -197,6 +199,7 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
             pointEdit = (TextView) itemView.findViewById(R.id.pointEdit);
             addressEdit = (TextView) itemView.findViewById(R.id.addressEdit);
             phoneEdit = (TextView) itemView.findViewById(R.id.phoneEdit);
+            fioEdit = (TextView) itemView.findViewById(R.id.fioEdit);
             completed = (CheckBox) itemView.findViewById(R.id.completed);
 
             TypedValue windowBackground = new TypedValue();
@@ -213,6 +216,7 @@ public class RoundDocActivity extends AppCompatActivity implements View.OnClickL
             pointEdit.setText(row.point);
             addressEdit.setText(row.address);
             phoneEdit.setText(row.phone);
+            fioEdit.setText(row.fio);
             completed.setChecked(row.complete);
 
             view.setBackgroundColor((position % 2 == 0) ? firstColor : secondColor);

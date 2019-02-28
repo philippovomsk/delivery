@@ -19,4 +19,11 @@ public class DbMigrations {
             supportSQLiteDatabase.execSQL("ALTER TABLE roundrow ADD COLUMN 'complete' INTEGER NOT NULL DEFAULT 0;");
         }
     };
+
+    public static Migration Migration3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+            supportSQLiteDatabase.execSQL("ALTER TABLE roundrow ADD COLUMN 'fio' TEXT;");
+        }
+    };
 }

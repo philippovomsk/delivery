@@ -26,4 +26,5 @@
     <string name="addressLabel">Адрес</string>
     <string name="phoneLabel">Телефон</string>
     <string name="roundDocTitle">Рейс</string>
+    <string name="fioLabel">ФИО</string>
 </resources>
