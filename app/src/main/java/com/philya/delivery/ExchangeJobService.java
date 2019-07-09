@@ -121,7 +121,7 @@ public class ExchangeJobService extends JobService implements Runnable {
         Db db = ((DeliveryApp) getApplication()).getDatabase();
 
         List<RoundDoc> forsend = db.roundDocDAO().getForSend(currentDriverId);
-        if(forsend.size() == 0) {
+        if (forsend.size() == 0) {
             Log.d("delivery.exchange", "Нет данных для отправки");
             return;
         }
@@ -129,13 +129,13 @@ public class ExchangeJobService extends JobService implements Runnable {
         f.sendNoOp();
 
         List<Map<String, Object>> roundComplete = new ArrayList<>();
-        for(RoundDoc doc : forsend) {
+        for (RoundDoc doc : forsend) {
             Map<String, Object> dc = new HashMap<>();
             dc.put("id", doc.head.id);
             dc.put("complete", doc.head.complete);
             roundComplete.add(dc);
 
-            for(RoundRow row : doc.rows) {
+            for (RoundRow row : doc.rows) {
                 dc = new HashMap<>();
                 dc.put("id", row.docid);
                 dc.put("complete", row.complete);
@@ -156,7 +156,7 @@ public class ExchangeJobService extends JobService implements Runnable {
         f.sendNoOp();
 
         String prevSendStr = preferences.getString("prevSendData", "");
-        if(resstr.equals(prevSendStr)) {
+        if (resstr.equals(prevSendStr)) {
             Log.d("delivery.exchange", "Нет изменений с последней отправки");
             return;
         }
@@ -170,7 +170,7 @@ public class ExchangeJobService extends JobService implements Runnable {
             filesindir = new String[0];
         }
         List<String> filesindirlist = Arrays.asList(filesindir);
-        while(filesindirlist.contains("r" + currentDriverId + "_" + String.format("%010d", officeExchangeNumber) + ".json")) {
+        while (filesindirlist.contains("r" + currentDriverId + "_" + String.format("%010d", officeExchangeNumber) + ".json")) {
             officeExchangeNumber++;
         }
         preferences.edit().putInt("officeExchangeNumber", officeExchangeNumber).apply();
@@ -194,13 +194,13 @@ public class ExchangeJobService extends JobService implements Runnable {
 
     private void updateCompleteFromOldDoc(RoundDoc oldDoc, RoundDoc newDoc) {
         Map<String, Boolean> oldRowsComplete = new HashMap<>();
-        for(RoundRow oldRow : oldDoc.rows) {
+        for (RoundRow oldRow : oldDoc.rows) {
             oldRowsComplete.put(oldRow.docid, oldRow.complete);
         }
 
         newDoc.head.complete = oldDoc.head.complete;
-        for(RoundRow newRow : newDoc.rows) {
-            if(oldRowsComplete.containsKey(newRow.docid)) {
+        for (RoundRow newRow : newDoc.rows) {
+            if (oldRowsComplete.containsKey(newRow.docid)) {
                 newRow.complete = oldRowsComplete.get(newRow.docid);
             }
         }
@@ -220,7 +220,7 @@ public class ExchangeJobService extends JobService implements Runnable {
             if (newItemsId.containsKey(oldItem.getId())) {
                 T newItem = newItemsId.get(oldItem.getId());
 
-                if(newItem instanceof RoundDoc) {
+                if (newItem instanceof RoundDoc) {
                     updateCompleteFromOldDoc((RoundDoc) oldItem, (RoundDoc) newItem);
                 }
 
@@ -244,6 +244,8 @@ public class ExchangeJobService extends JobService implements Runnable {
             Log.d("delivery.exchange", "В ftp папке нет d.json");
             return;
         }
+
+        Map<String, String> locksForRounds = readRoundLocks(f);
 
         File localcopy = File.createTempFile("fromoffice", "json", getCacheDir());
         OutputStream output = new FileOutputStream(localcopy);
@@ -291,7 +293,12 @@ public class ExchangeJobService extends JobService implements Runnable {
                     } else if (name.equals("round")) {
                         Type roundType = new TypeToken<List<RoundDoc>>() {
                         }.getType();
-                        List roundDocs = gson.fromJson(jsonReader, roundType);
+                        List<RoundDoc> roundDocs = gson.fromJson(jsonReader, roundType);
+                        for(RoundDoc doc : roundDocs) {
+                            if(locksForRounds.containsKey(doc.head.id) && doc.head.driverId.isEmpty()) {
+                                doc.head.driverId = locksForRounds.get(doc.head.id);
+                            }
+                        }
 
                         f.sendNoOp();
 
@@ -319,5 +326,52 @@ public class ExchangeJobService extends JobService implements Runnable {
 
         localcopy.delete();
     }
+
+    private Map<String, String> readRoundLocks(FTPClient f) throws IOException {
+        Map<String, String> res = new HashMap<>();
+
+        String[] filesindir = f.listNames();
+        if (filesindir == null || filesindir.length == 0) {
+            return res;
+        }
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+        Gson gson = gsonBuilder.create();
+
+        Type roundLockType = new TypeToken<RoundLock>() {
+        }.getType();
+
+        for (String filename : filesindir) {
+            if (!(filename.startsWith("lr") && filename.endsWith(".json"))) {
+                continue;
+            }
+
+            File localcopy = File.createTempFile("lrfromoffice", "json", getCacheDir());
+            OutputStream output = new FileOutputStream(localcopy);
+
+            Log.d("delivery.exchange", "Начало закачки файла " + filename);
+            if (!f.retrieveFile(filename, output)) {
+                output.close();
+                localcopy.delete();
+
+                throw new IOException("Не удалось скачать файл " + filename);
+            }
+            output.close();
+            Log.d("delivery.exchange", "Конец закачки файла " + filename);
+
+            try (FileReader fr = new FileReader(localcopy);
+                 JsonReader jsonReader = new JsonReader(fr)) {
+
+                RoundLock lock = gson.fromJson(jsonReader, roundLockType);
+                res.put(lock.roundId, lock.driverId);
+            }
+
+            localcopy.delete();
+        }
+
+        return res;
+    }
+
 
 }

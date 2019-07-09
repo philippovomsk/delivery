@@ -26,4 +26,13 @@ public class DbMigrations {
             supportSQLiteDatabase.execSQL("ALTER TABLE roundrow ADD COLUMN 'fio' TEXT;");
         }
     };
+
+    public static Migration Migration4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+            supportSQLiteDatabase.execSQL("ALTER TABLE round ADD COLUMN 'contractPrice' INTEGER NOT NULL DEFAULT 0;");
+            supportSQLiteDatabase.execSQL("ALTER TABLE round ADD COLUMN 'weight' INTEGER NOT NULL DEFAULT 0;");
+            supportSQLiteDatabase.execSQL("ALTER TABLE round ADD COLUMN 'mileage' INTEGER NOT NULL DEFAULT 0;");
+        }
+    };
 }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,15 +15,21 @@ import android.widget.TextView;
 import com.philya.delivery.db.Db;
 import com.philya.delivery.db.Driver;
 import com.philya.delivery.db.RoundDoc;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableMaybeObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Callable;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.philya.delivery.ExchangeJobService.docDateFormat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -47,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         RecyclerView rounds = (RecyclerView) findViewById(R.id.rounds);
 
-        adapter = new RoundRowsAdapter();
+        adapter = new RoundRowsAdapter(this);
         rounds.setAdapter(adapter);
     }
 
@@ -103,12 +108,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(final Menu menu) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String lastexchange = preferences.getString("lastexchange", "");
         String title = getResources().getString(R.string.exchangeLabel);
 
-        menu.getItem(0).setTitle(title + " / " + lastexchange);
+        menu.getItem(1).setTitle(title + " / " + lastexchange);
+
+        String currentDriverId = preferences.getString("currentDriverId", "drivernotselect");
+        if(currentDriverId.equals("drivernotselect")) {
+            menu.getItem(0).setEnabled(false);
+        } else {
+            menu.getItem(0).setEnabled(true);
+            rxSubscriptions.add(((DeliveryApp) getApplication()).getDatabase().roundDocDAO().countFreeRounds().
+                    subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).
+                    subscribe(new Consumer<Integer>() {
+                        @Override
+                        public void accept(Integer val) throws Exception {
+                            String freeRounds = getResources().getString(R.string.freeRounds);
+                            menu.getItem(0).setTitle(freeRounds + " (" + val + ")");
+                        }
+                    }));
+        }
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -120,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(settings);
         } else if (item.getItemId() == R.id.menuExchange) {
             Exchange.startExchangeJob(getApplicationContext(), 0);
+        } else if (item.getItemId() == R.id.freeRounds) {
+            Intent settings = new Intent(this, FreeRoundsActivity.class);
+            startActivity(settings);
         }
 
         return super.onOptionsItemSelected(item);
@@ -133,88 +157,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public class RoundRowsAdapter extends RecyclerView.Adapter<RoundRowItemViewHolder> {
-
-        private List<RoundDoc> docs = new ArrayList<>();
-
-        @NonNull
-        @Override
-        public RoundRowItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rounditem, parent, false);
-            return new RoundRowItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RoundRowItemViewHolder holder, int position) {
-            holder.bind(docs.get(position), position);
-        }
-
-        @Override
-        public int getItemCount() {
-            return docs.size();
-        }
-
-        public void setDocs(List<RoundDoc> docs) {
-            this.docs = docs;
-            notifyDataSetChanged();
-        }
-    }
-
-    public class RoundRowItemViewHolder extends RecyclerView.ViewHolder {
-
-        protected ConstraintLayout view;
-
-        private TextView numberEdit;
-
-        private TextView dateEdit;
-
-        private TextView carEdit;
-
-        private TextView fromEdit;
-
-        private CheckBox completed;
-
-        private int firstColor;
-
-        private int secondColor;
-
-        public RoundRowItemViewHolder(View itemView) {
-            super(itemView);
-
-            view = (ConstraintLayout) itemView.findViewById(R.id.roundItem);
-            numberEdit = (TextView) itemView.findViewById(R.id.numberEdit);
-            dateEdit = (TextView) itemView.findViewById(R.id.dateEdit);
-            carEdit = (TextView) itemView.findViewById(R.id.carEdit);
-            fromEdit = (TextView) itemView.findViewById(R.id.fromEdit);
-            completed = (CheckBox) itemView.findViewById(R.id.completed);
-
-            TypedValue windowBackground = new TypedValue();
-            getTheme().resolveAttribute(android.R.attr.windowBackground, windowBackground, true);
-            if (windowBackground.type >= TypedValue.TYPE_FIRST_COLOR_INT && windowBackground.type <= TypedValue.TYPE_LAST_COLOR_INT) {
-                firstColor = windowBackground.data;
-            }
-
-            secondColor = getResources().getColor(R.color.colorListRow);
-        }
-
-        public void bind(final RoundDoc doc, int position) {
-            numberEdit.setText(doc.head.number);
-            dateEdit.setText(docDateFormat.format(doc.head.date));
-            carEdit.setText(doc.head.car);
-            fromEdit.setText(doc.head.from);
-            completed.setChecked(doc.head.complete);
-
-            view.setBackgroundColor((position % 2 == 0) ? firstColor : secondColor);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent docintent = new Intent(MainActivity.this, RoundDocActivity.class);
-                    docintent.putExtra("doc", doc);
-                    startActivity(docintent);
-                }
-            });
-        }
-    }
 
 }

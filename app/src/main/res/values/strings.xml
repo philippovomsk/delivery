@@ -27,4 +27,11 @@
     <string name="phoneLabel">Телефон</string>
     <string name="roundDocTitle">Рейс</string>
     <string name="fioLabel">ФИО</string>
+    <string name="weight">Масса</string>
+    <string name="contractPrice">Оплата рейса</string>
+    <string name="freeRounds">Свободные рейсы</string>
+    <string name="freeRoundDocTitle">Свободный рейс</string>
+    <string name="getRound">Взять рейс</string>
+    <string name="takeFreeRound">УСПЕХ! Вы взяли рейс!</string>
+    <string name="failTakeFreeRound">НЕУДАЧА! Этот рейс уже кто-то взял!</string>
 </resources>

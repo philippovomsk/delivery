@@ -12,11 +12,6 @@
             android:theme="@style/AppTheme"
             android:name=".DeliveryApp">
 
-        <activity
-                android:name=".LoginActivity"
-                android:label="@string/app_name">
-        </activity>
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -35,6 +30,12 @@
         <activity android:name=".RoundDocActivity"
                   android:parentActivityName=".MainActivity">
         </activity>
+
+        <activity android:name=".FreeRoundsActivity"
+                  android:parentActivityName=".MainActivity"/>
+
+        <activity android:name=".FreeRoundDocActivity"
+                  android:parentActivityName=".FreeRoundsActivity"/>
 
         <service android:name=".ExchangeJobService"
                  android:permission="android.permission.BIND_JOB_SERVICE"/>

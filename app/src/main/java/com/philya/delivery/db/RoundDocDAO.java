@@ -69,6 +69,14 @@ public abstract class RoundDocDAO implements ExchangeDAO<RoundDoc> {
     @Query("SELECT * FROM round WHERE driverId = :driverId ORDER BY date, number")
     public abstract Flowable<List<RoundDoc>> listAll(String driverId);
 
+    @Transaction
     @Query("SELECT * FROM round WHERE driverId = :driverId ORDER BY date, number")
     public abstract List<RoundDoc> getForSend(String driverId);
+
+    @Query("SELECT COUNT(id) FROM round WHERE driverId = ''")
+    public abstract Flowable<Integer> countFreeRounds();
+
+    @Transaction
+    @Query("SELECT * FROM round WHERE driverId = '' ORDER BY date, number")
+    public abstract Flowable<List<RoundDoc>> listAllFree();
 }

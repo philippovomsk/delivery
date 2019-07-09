@@ -138,4 +138,39 @@ public class ExampleInstrumentedTest {
         // but you need to validate that the data was migrated properly.
         db.close();
     }
+
+    @Test
+    public void migrate4To5() throws IOException {
+        SupportSQLiteDatabase db = helper.createDatabase(TEST_DB, 4);
+
+        ContentValues cvs = new ContentValues();
+        cvs.put("id", "1");
+        cvs.put("number", "222");
+        cvs.put("date", 2);
+        cvs.put("car", "");
+        cvs.put("driverId", "");
+        cvs.put("complete", false);
+        cvs.put("'from'", "");
+        db.insert("round", SQLiteDatabase.CONFLICT_REPLACE, cvs);
+
+        // Prepare for the next version.
+        db.close();
+
+        // Re-open the database with version 2 and provide
+        // MIGRATION_1_2 as the migration process.
+        db = helper.runMigrationsAndValidate(TEST_DB, 5, true, DbMigrations.Migration4_5);
+
+        Cursor c = db.query("SELECT weight, contractPrice, mileage FROM round");
+        if(c.moveToFirst()) {
+            Assert.assertEquals(0, c.getInt(0));
+            Assert.assertEquals(0, c.getInt(1));
+            Assert.assertEquals(0, c.getInt(2));
+        } else {
+            Assert.fail();
+        }
+
+        // MigrationTestHelper automatically verifies the schema changes,
+        // but you need to validate that the data was migrated properly.
+        db.close();
+    }
 }

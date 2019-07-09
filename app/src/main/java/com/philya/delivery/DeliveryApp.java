@@ -5,9 +5,7 @@ import android.arch.persistence.room.Room;
 import android.preference.PreferenceManager;
 import com.philya.delivery.db.Db;
 
-import static com.philya.delivery.db.DbMigrations.Migration1_2;
-import static com.philya.delivery.db.DbMigrations.Migration2_3;
-import static com.philya.delivery.db.DbMigrations.Migration3_4;
+import static com.philya.delivery.db.DbMigrations.*;
 
 public class DeliveryApp extends Application {
 
@@ -24,7 +22,7 @@ public class DeliveryApp extends Application {
     public Db getDatabase() {
         if(database == null) {
             database = Room.databaseBuilder(getApplicationContext(), Db.class, "deliverydb").
-                    addMigrations(Migration1_2, Migration2_3, Migration3_4).build();
+                    addMigrations(Migration1_2, Migration2_3, Migration3_4, Migration4_5).build();
         }
 
         return database;

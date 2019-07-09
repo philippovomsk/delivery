@@ -20,10 +20,16 @@ public class Round implements Serializable {
 
     public String car;
 
-    public String driverId;
+    public String driverId = "";
 
     public boolean complete = false;
 
     public String from;
+
+    public int contractPrice = 0;
+
+    public int weight = 0;
+
+    public int mileage = 0;
 
 }
