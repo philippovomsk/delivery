@@ -157,7 +157,7 @@ public class FreeRoundDocActivity extends AppCompatActivity {
                     GsonBuilder gsonBuilder = new GsonBuilder();
                     Gson gson = gsonBuilder.create();
 
-                    String resstr = gson.toJson(lock);
+                    String resstr = gson.toJson(lock) + '\n';
 
                     File outfile = File.createTempFile("lockround", "json", getCacheDir());
 
@@ -192,7 +192,7 @@ public class FreeRoundDocActivity extends AppCompatActivity {
 
                         // пробуем записать файл блокировки, если файл есть, то он запишется с имененм вида {uuid}.tmp
                         try (FileInputStream fi = new FileInputStream(outfile)) {
-                            if (!f.storeUniqueFile(lockFileName, fi)) {
+                            if (!f.appendFile(lockFileName, fi)) {
                                 throw new IOException("Ошибка при обмене с сервером! Не удалось отправить файл блокировки!");
                             }
                         } finally {
@@ -211,12 +211,12 @@ public class FreeRoundDocActivity extends AppCompatActivity {
                         }
                         output.close();
 
-                        try (FileReader fr = new FileReader(localcopy);
-                             JsonReader jsonReader = new JsonReader(fr)) {
+                        try (BufferedReader br = new BufferedReader(new FileReader(localcopy))) {
 
-                            Type roundLockType = new TypeToken<RoundLock>() {
-                            }.getType();
-                            RoundLock rlock = gson.fromJson(jsonReader, roundLockType);
+                            String firstLine = br.readLine();
+                            Type roundLockType = new TypeToken<RoundLock>() {}.getType();
+
+                            RoundLock rlock = gson.fromJson(firstLine, roundLockType);
 
                             doc.head.driverId = rlock.driverId;
                             ((DeliveryApp) getApplication()).getDatabase().roundDocDAO().update(doc);

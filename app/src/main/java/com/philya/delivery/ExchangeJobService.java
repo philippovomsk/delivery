@@ -360,10 +360,10 @@ public class ExchangeJobService extends JobService implements Runnable {
             output.close();
             Log.d("delivery.exchange", "Конец закачки файла " + filename);
 
-            try (FileReader fr = new FileReader(localcopy);
-                 JsonReader jsonReader = new JsonReader(fr)) {
+            try (BufferedReader fr = new BufferedReader(new FileReader(localcopy))) {
+                String firstLine = fr.readLine();
 
-                RoundLock lock = gson.fromJson(jsonReader, roundLockType);
+                RoundLock lock = gson.fromJson(firstLine, roundLockType);
                 res.put(lock.roundId, lock.driverId);
             }
 
